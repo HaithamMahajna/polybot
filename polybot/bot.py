@@ -3,7 +3,7 @@ from loguru import logger
 import os
 import time
 from telebot.types import InputFile
-from polybot.img_proc import Img
+from .img_proc import Img
 
 
 class Bot:
@@ -75,4 +75,71 @@ class QuoteBot(Bot):
 
 
 class ImageProcessingBot(Bot):
-    pass
+
+    def handle_message(self, msg):
+        try:
+            chat_id = msg['chat']['id']
+            print("Message received")
+
+            # media_groups to handle Concat
+            if not hasattr(self, 'media_groups'):
+                self.media_groups = {}
+
+            if 'photo' in msg:
+                caption = msg.get('caption', '').strip()
+                media_group_id = msg.get('media_group_id')
+
+                # Handle media group for 'Concat'
+                if media_group_id:
+                    if media_group_id not in self.media_groups:
+                        self.media_groups[media_group_id] = []
+
+                    self.media_groups[media_group_id].append(msg)
+
+                    if len(self.media_groups[media_group_id]) < 2:
+                        print("Waiting for more photos in media group...")
+                        return  # wait for second photo
+
+                    # Got both images
+                    msgs = self.media_groups.pop(media_group_id)
+                    caption = msgs[0].get('caption', '').strip()
+
+                    if caption != 'Concat':
+                        self.send_text(chat_id, "Expected caption: 'Concat'")
+                        return
+
+                    img1 = Img(self.download_user_photo(msgs[0]))
+                    img2 = Img(self.download_user_photo(msgs[1]))
+                    img1.concat(img2)
+                    processed_path = img1.save_img()
+                    self.send_photo(chat_id, processed_path)
+                    return
+
+                # Single-photo logic
+                photo_path = self.download_user_photo(msg)
+                img = Img(photo_path)
+
+                if caption == 'Blur':
+                    img.blur()
+                elif caption == 'Contour':
+                    img.contour()
+                elif caption == 'Rotate':
+                    img.rotate()
+                elif caption == 'Segment':
+                    img.segment()
+                elif caption == 'Salt and pepper':
+                    img.salt_n_pepper()
+                else:
+                    self.send_text(chat_id, "Unknown or missing caption.")
+                    return
+
+                processed_path = img.save_img()
+                self.send_photo(chat_id, processed_path)
+
+            elif 'text' in msg:
+                super().handle_message(msg)
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            self.send_text(msg['chat']['id'], "Something went wrong... please try again")

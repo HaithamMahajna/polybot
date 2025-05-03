@@ -1,7 +1,6 @@
 from pathlib import Path
 from matplotlib.image import imread, imsave
 
-
 def rgb2gray(rgb):
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
@@ -51,17 +50,59 @@ class Img:
             self.data[i] = res
 
     def rotate(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+        rows = len(self.data)
+        cols = len(self.data[0])
+
+        rotated = []
+        for col in range(cols):
+            new_row = []
+            for row in reversed(range(rows)):
+                new_row.append(self.data[row][col])
+            rotated.append(new_row)
+
+        self.data = rotated
+
+
 
     def salt_n_pepper(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+        import random
+        for i in range(len(self.data)):
+            for j in range(len(self.data[i])):
+                rnd = random.random()  # Random float between 0 and 1
+                if rnd < 0.2:
+                    self.data[i][j] = 255  # Salt
+                elif rnd > 0.8:
+                    self.data[i][j] = 0  # Pepper
+                # Otherwise, leave pixel unchanged
 
     def concat(self, other_img, direction='horizontal'):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+
+        if direction == 'horizontal':
+
+            if len(self.data) != len(other_img.data):
+                raise ValueError("Images must have the same number of rows to concatenate horizontally.")
+
+            concatenated = []
+            for row_self, row_other in zip(self.data, other_img.data):
+                concatenated.append(row_self + row_other)
+            self.data = concatenated
+
+        elif direction == 'vertical':
+
+            if len(self.data[0]) != len(other_img.data[0]):
+                raise ValueError("Images must have the same number of columns to concatenate vertically.")
+
+            self.data = self.data + other_img.data
+
+        else:
+            raise ValueError("Direction must be 'horizontal' or 'vertical'.")
 
     def segment(self):
-        # TODO remove the `raise` below, and write your implementation
-        raise NotImplementedError()
+
+        for i in range(len(self.data)):
+            for j in range(len(self.data[i])):
+                if self.data[i][j] > 100:
+                    self.data[i][j] = 255
+                else:
+                    self.data[i][j] = 0
+
