@@ -4,7 +4,7 @@ import os
 import time
 from telebot.types import InputFile
 from .img_proc import Img
-
+import requests
 
 class Bot:
 
