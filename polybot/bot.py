@@ -74,8 +74,8 @@ class QuoteBot(Bot):
             self.send_text_with_quote(msg['chat']['id'], msg["text"], quoted_msg_id=msg["message_id"])
 
 
-class ImageProcessingBot(Bot):
 
+class ImageProcessingBot(Bot):
     def handle_message(self, msg):
         try:
             chat_id = msg['chat']['id']
@@ -129,6 +129,19 @@ class ImageProcessingBot(Bot):
                     img.segment()
                 elif caption == 'Salt and pepper':
                     img.salt_n_pepper()
+                elif caption == 'Detect':
+                    # New logic: send image to YOLO detection server
+                    yolo_url = os.environ['YOLO_SERVER_URL']
+                    with open(photo_path, 'rb') as f:
+                        response = requests.post(yolo_url, files={'file': f})
+                    if response.status_code == 200:
+                        result = response.json()
+                        labels = result.get("labels", [])
+                        detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
+                        self.send_text(chat_id, detection_msg)
+                    else:
+                        self.send_text(chat_id, f"YOLO server error: {response.status_code}")
+                    return
                 else:
                     self.send_text(chat_id, "Unknown or missing caption.")
                     return
@@ -138,8 +151,7 @@ class ImageProcessingBot(Bot):
 
             elif 'text' in msg:
                 super().handle_message(msg)
-
         except Exception as e:
             import traceback
             traceback.print_exc()
-            self.send_text(msg['chat']['id'], "Something went wrong... please try again")
+            self.send_text(msg['chat']['id'], "Something went wrong... please try again")    
