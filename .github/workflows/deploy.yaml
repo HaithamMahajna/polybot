@@ -90,13 +90,7 @@ jobs:
            sudo systemctl enable yolo.service
            sudo systemctl status yolo.service --no-pager
           EOF
-
-
-
-
-
-
-
+          
       - name: Execute script on EC2
         run: |
           ssh ec2 "cd $REPO_NAME && bash deploy.sh"
