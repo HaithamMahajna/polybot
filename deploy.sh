@@ -23,10 +23,10 @@ pip install -r requirements.txt
 pkill -f "uvicorn" || true
 
 
-
 if ! systemctl is-active --quiet polybot.service; then
   echo "❌ polybot.service is not running."
   sudo systemctl status polybot.service --no-pager
   exit 1
 fi
+
 
