@@ -54,7 +54,7 @@ jobs:
           ssh ec2 "if [ -d ~/${REPO_NAME} ]; then cd ~/${REPO_NAME} && git pull --no-rebase; else git clone ${REPO_URL} ~/${REPO_NAME}; fi"
       - name: Create polybot.service file
         run: |
-          cat <<EOF > Polybot.service
+          cat <<EOF > polybot.service
           [Unit]
           Description=poly bot Service
           After=network.target
@@ -71,7 +71,7 @@ jobs:
           EOF
         
 
-      - name: Copy Polybot.service to EC2
+      - name: Copy polybot.service to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
@@ -81,9 +81,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
           chmod 600 ~/.ssh/private_key
-          scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no Polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+          scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
           ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-          sudo mv /home/$EC2_USERNAME/Polybot.service /etc/systemd/system/Polybot.service
+          sudo mv /home/$EC2_USERNAME/polybot.service /etc/systemd/system/polybot.service
           EOF
           
       - name: Execute script on EC2
