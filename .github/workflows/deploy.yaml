@@ -4,9 +4,8 @@ name: Polybot Deploy
 on:
   # The workflow will run when a push is made to branch `main`
   push:
-    pull_request:
-      branches:
-       - main
+    branches:
+      - main
      
   # Allow to run it manually as well from GitHub web
   workflow_dispatch:
