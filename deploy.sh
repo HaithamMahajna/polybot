@@ -23,9 +23,9 @@ source venv/bin/activate
 pkill -f "uvicorn" || true
 
 sudo systemctl daemon-reload
-sudo systemctl restart Polybot.service
-sudo systemctl enable Polybot.service
-sudo systemctl status Polybot.service --no-pager
+sudo systemctl restart polybot.service
+sudo systemctl enable polybot.service
+sudo systemctl status polybot.service --no-pager
 
 if ! systemctl is-active --quiet polybot.service; then
   echo "❌ polybot.service is not running."
