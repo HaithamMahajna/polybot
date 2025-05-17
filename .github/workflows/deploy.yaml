@@ -55,16 +55,16 @@ jobs:
 
       - name: Create polybot.service file
         run: |
-          cat <<EOF > yolo.service
+          cat <<EOF > Polybot.service
           [Unit]
           Description=poly bot Service
           After=network.target
           [Service]
           User=ubuntu
-          WorkingDirectory=/home/ubuntu
+          WorkingDirectory=/home/ubuntu/polybot
           ExecStart=/home/ubuntu/polybot/venv/bin/python3 -m polybot.app
           Environment=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
-          Environment=BOT_APP_URL=${{ secrets.BOT_APP_URL }}
+          Environment=BOT_APP_URL=https://haitham.fursa.click
           Environment=YOLO_SERVER_URL=${{ secrets.YOLO_SERVER_URL }}
           Restart=always
           [Install]
@@ -72,7 +72,7 @@ jobs:
           EOF
         
 
-      - name: Copy yolo.service to EC2
+      - name: Copy Polybot.service to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
@@ -82,13 +82,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
           chmod 600 ~/.ssh/private_key
-          scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no yolo.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+          scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no Polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
           ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-           sudo mv /home/$EC2_USERNAME/yolo.service /etc/systemd/system/yolo.service
-           sudo systemctl daemon-reload
-           sudo systemctl restart yolo.service
-           sudo systemctl enable yolo.service
-           sudo systemctl status yolo.service --no-pager
+          sudo mv /home/$EC2_USERNAME/Polybot.service /etc/systemd/system/Polybot.service
           EOF
           
       - name: Execute script on EC2
