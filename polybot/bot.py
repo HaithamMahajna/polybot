@@ -119,7 +119,9 @@ class ImageProcessingBot(Bot):
                 photo_path = self.download_user_photo(msg)
                 img = Img(photo_path)
 
-                if caption == 'Blur':
+                if caption == 'blur':
+
+                    
                     img.blur()
                 elif caption == 'Contour':
                     img.contour()
