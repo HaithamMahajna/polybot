@@ -4,7 +4,7 @@
 set -e
 
 echo "Starting deployment..."
-
+git checkout dev
 
 if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."
