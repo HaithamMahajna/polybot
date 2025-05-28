@@ -63,7 +63,7 @@ jobs:
           WorkingDirectory=/home/ubuntu/polybot
           ExecStart=/home/ubuntu/polybot/venv/bin/python3 -m polybot.app
           Environment=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
-          Environment=BOT_APP_URL=https://vocal-impala-obliging.ngrok-free.app
+          Environment=BOT_APP_URL=https://ec36-52-203-211-222.ngrok-free.app
           Environment=YOLO_SERVER_URL=${{ secrets.YOLO_SERVER_URL_DEV }}
           Restart=always
           [Install]
