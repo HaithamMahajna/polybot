@@ -62,7 +62,7 @@ jobs:
           User=ubuntu
           WorkingDirectory=/home/ubuntu/polybot
           ExecStart=/home/ubuntu/polybot/venv/bin/python3 -m polybot.app
-          Environment=TELEGRAM_BOT_TOKEN_DEV=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          Environment=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
           Environment=BOT_APP_URL=https://haitham.fursa.click
           Environment=YOLO_SERVER_URL=${{ secrets.YOLO_SERVER_URL }}
           Restart=always
