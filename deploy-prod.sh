@@ -4,8 +4,7 @@
 set -e
 
 echo "Starting deployment..."
-
-cd ~/${REPO_NAME}
+git checkout dev
 
 if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."
@@ -25,12 +24,19 @@ pkill -f "uvicorn" || true
 sudo systemctl daemon-reload
 sudo systemctl restart polybot.service
 sudo systemctl enable polybot.service
-sudo systemctl status polybot.service --no-pager
 
+sudo systemctl restart otelcol
+
+sudo systemctl status polybot.service --no-pager
 if ! systemctl is-active --quiet polybot.service; then
   echo "❌ polybot.service is not running."
   sudo systemctl status polybot.service --no-pager
   exit 1
 fi
 
+if ! systemctl is-active --quiet otelcol.service; then
+  echo "❌ yolo.service is not running."
+  sudo systemctl status otelcol.service --no-pager
+  exit 1
+fi
 

@@ -63,7 +63,7 @@ jobs:
           WorkingDirectory=/home/ubuntu/polybot
           ExecStart=/home/ubuntu/polybot/venv/bin/python3 -m polybot.app
           Environment=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
-          Environment=BOT_APP_URL=https://haitham.fursa.click
+          Environment=BOT_APP_URL=https://
           Environment=YOLO_SERVER_URL=${{ secrets.YOLO_SERVER_URL }}
           Restart=always
           [Install]
@@ -85,7 +85,43 @@ jobs:
           ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
           sudo mv /home/$EC2_USERNAME/polybot.service /etc/systemd/system/polybot.service
           EOF
+
+
+        - name: Install OTC
+        run : |
+          ssh ec2 << 'EOF'
+            sudo apt-get update 
+            sudo apt-get -y install wget
+            wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.127.0/otelcol_0.127.0_linux_amd64.deb
+            sudo dpkg -i otelcol_0.127.0_linux_amd64.deb
+          EOF
+
+      - name: Create config.yaml on EC2
+        run: |
+          ssh ec2 << 'EOF'
+            sudo tee /etc/otelcol/config.yaml > /dev/null << EOC
+              receivers:
+                hostmetrics:
+                  collection_interval: 15s
+                  scrapers:
+                    cpu:
+                    memory:
+                    disk:
+                    filesystem:
+                    load:
+                    network:
+                    processes:
+              exporters:
+                prometheus:
+                  endpoint: "0.0.0.0:8889"
+              service:
+                pipelines:
+                  metrics:
+                    receivers: [hostmetrics]
+                    exporters: [prometheus]
+          EOC
+          EOF
           
       - name: Execute script on EC2
         run: |
-          ssh ec2 "cd $REPO_NAME && bash deploy.sh"
+          ssh ec2 "cd $REPO_NAME && bash deploy-prod.sh"
