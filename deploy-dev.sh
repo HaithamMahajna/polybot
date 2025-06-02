@@ -2,6 +2,7 @@
 
 # Stop on any error
 set -e
+cd polyobt
 pwd
 echo "Starting deployment..."
 git checkout dev
