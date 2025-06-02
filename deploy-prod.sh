@@ -2,9 +2,8 @@
 
 # Stop on any error
 set -e
-cd ~/${REPO_NAME}
+
 echo "Starting deployment..."
-git checkout dev
 
 if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
     echo "Creating virtual environment..."

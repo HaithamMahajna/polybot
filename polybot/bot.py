@@ -119,7 +119,7 @@ class ImageProcessingBot(Bot):
                 photo_path = self.download_user_photo(msg)
                 img = Img(photo_path)
 
-                if caption == 'blur':
+                if caption == 'Blur':
 
                     
                     img.blur()
@@ -133,7 +133,7 @@ class ImageProcessingBot(Bot):
                     img.salt_n_pepper()
                 elif caption == 'Detect':
                     # New logic: send image to YOLO detection server
-                    yolo_url = os.environ['YOLO_SERVER_URL_DEV']
+                    yolo_url = os.environ['YOLO_SERVER_URL']
                     with open(photo_path, 'rb') as f:
                         response = requests.post(yolo_url, files={'file': f})
                     if response.status_code == 200:
