@@ -2,7 +2,6 @@
 
 # Stop on any error
 set -e
-cd ~/${REPO_NAME}
 pwd
 echo "Starting deployment..."
 git checkout dev
