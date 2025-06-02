@@ -2,7 +2,7 @@
 
 # Stop on any error
 set -e
-
+cd ~/${REPO_NAME}
 echo "Starting deployment..."
 git checkout dev
 
