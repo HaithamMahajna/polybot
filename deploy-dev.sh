@@ -2,6 +2,7 @@
 
 # Stop on any error
 set -e
+pwd
 cd polyobot
 pwd
 echo "Starting deployment..."
