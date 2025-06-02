@@ -2,7 +2,7 @@
 
 # Stop on any error
 set -e
-cd polyobt
+cd polyobot
 pwd
 echo "Starting deployment..."
 git checkout dev
