@@ -3,8 +3,7 @@
 # Stop on any error
 set -e
 pwd
-cd polyobot
-pwd
+cd polybot
 echo "Starting deployment..."
 git checkout dev
 
