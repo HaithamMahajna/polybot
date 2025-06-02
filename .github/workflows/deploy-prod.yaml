@@ -87,7 +87,7 @@ jobs:
           EOF
 
 
-        - name: Install OTC
+      - name: Install OTC
         run : |
           ssh ec2 << 'EOF'
             sudo apt-get update 
