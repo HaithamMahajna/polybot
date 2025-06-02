@@ -133,7 +133,7 @@ class ImageProcessingBot(Bot):
                     img.salt_n_pepper()
                 elif caption == 'Detect':
                     # New logic: send image to YOLO detection server
-                    yolo_url = os.environ['YOLO_SERVER_URL']
+                    yolo_url = os.environ['YOLO_SERVER_URL_DEV']
                     with open(photo_path, 'rb') as f:
                         response = requests.post(yolo_url, files={'file': f})
                     if response.status_code == 200:
