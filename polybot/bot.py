@@ -130,10 +130,7 @@ class ImageProcessingBot(Bot):
 
                 # Single-photo logic
                 photo_path = self.download_user_photo(msg)
-                s3_key = photo_path
                 img = Img(photo_path)
-                self.upload_to_s3(photo_path, s3_key)
-                result = self.notify_yolo_service(s3_key)
                 
 
                 if caption == 'Blur':
@@ -148,11 +145,12 @@ class ImageProcessingBot(Bot):
                     img.segment()
                 elif caption == 'Salt and pepper':
                     img.salt_n_pepper()
-                elif caption == 'Detect':
+                if caption == 'Detect':
                     # New logic: send image to YOLO detection server
                     yolo_url = os.environ['YOLO_SERVER_URL']
-                    with open(photo_path, 'rb') as f:
-                        response = requests.post(yolo_url, files={'file': f})
+                    s3_key = photo_path
+                    self.upload_to_s3(photo_path, s3_key)
+                    response = self.notify_yolo_service(s3_key)
                     if response.status_code == 200:
                         result = response.json()
                         labels = result.get("labels", [])
@@ -163,10 +161,10 @@ class ImageProcessingBot(Bot):
                     return
                 else:
                     self.send_text(chat_id, "Unknown or missing caption.")
-                    return
+                    processed_path = img.save_img()
+                    self.send_photo(chat_id, processed_path)
 
-                processed_path = img.save_img()
-                self.send_photo(chat_id, processed_path)
+                    return
 
             elif 'text' in msg:
                 super().handle_message(msg)
