@@ -15,7 +15,7 @@ class Bot:
         self.telegram_bot_client = telebot.TeleBot(token)
         self.s3_bucket_name = 'haitham-polybot-dev'
         self.s3_client = boto3.client('s3')
-        yolo_url = os.environ['YOLO_SERVER_URL']
+        self.yolo_url = os.environ['YOLO_SERVER_URL']
 
         # remove any existing webhooks configured in Telegram servers
         self.telegram_bot_client.remove_webhook()
@@ -131,23 +131,10 @@ class ImageProcessingBot(Bot):
                 # Single-photo logic
                 photo_path = self.download_user_photo(msg)
                 img = Img(photo_path)
-                
 
-                if caption == 'Blur':
 
-                    
-                    img.blur()
-                elif caption == 'Contour':
-                    img.contour()
-                elif caption == 'Rotate':
-                    img.rotate()
-                elif caption == 'Segment':
-                    img.segment()
-                elif caption == 'Salt and pepper':
-                    img.salt_n_pepper()
+
                 if caption == 'Detect':
-                    # New logic: send image to YOLO detection server
-                    yolo_url = os.environ['YOLO_SERVER_URL']
                     s3_key = photo_path
                     self.upload_to_s3(photo_path, s3_key)
                     response = self.notify_yolo_service(s3_key)
@@ -159,6 +146,16 @@ class ImageProcessingBot(Bot):
                     else:
                         self.send_text(chat_id, f"YOLO server error: {response.status_code}")
                     return
+                elif caption == 'Blur':
+                    img.blur()
+                elif caption == 'Contour':
+                    img.contour()
+                elif caption == 'Rotate':
+                    img.rotate()
+                elif caption == 'Segment':
+                    img.segment()
+                elif caption == 'Salt and pepper':
+                    img.salt_n_pepper()
                 else:
                     self.send_text(chat_id, "Unknown or missing caption.")
                     processed_path = img.save_img()
