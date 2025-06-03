@@ -57,7 +57,7 @@ class Bot:
         return file_info.file_path
     def upload_to_s3(self, local_file_path, s3_key):
         self.s3_client.upload_file(local_file_path, self.s3_bucket_name, s3_key)
-        os.remove(local_file_path)
+        
 
     def notify_yolo_service(self, image_name):
         payload = {'image_name': image_name}
