@@ -60,9 +60,9 @@ class Bot:
         
 
     def notify_yolo_service(self, image_name):
-        payload = {'image_name': image_name}
-        response = requests.post(self.yolo_url, data=payload)
-        response.raise_for_status()
+        payload = {'image_name': image_name}  
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(self.yolo_url, json=payload, headers=headers)
         return response.json()
 
     def send_photo(self, chat_id, img_path):
@@ -138,9 +138,6 @@ class ImageProcessingBot(Bot):
                 if caption == 'Detect':
                     s3_key = photo_path
                     self.upload_to_s3(photo_path, s3_key)
-
-                    self.send_text(chat_id, s3_key)
-
                     response = self.notify_yolo_service(s3_key)
                     if response.status_code == 200:
                         result = response.json()
