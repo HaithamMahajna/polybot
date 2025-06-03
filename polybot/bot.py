@@ -138,6 +138,9 @@ class ImageProcessingBot(Bot):
                 if caption == 'Detect':
                     s3_key = photo_path
                     self.upload_to_s3(photo_path, s3_key)
+
+                    self.send_text(chat_id, "s3_key")
+
                     response = self.notify_yolo_service(s3_key)
                     if response.status_code == 200:
                         result = response.json()
