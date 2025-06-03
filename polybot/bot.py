@@ -15,7 +15,7 @@ class Bot:
         self.telegram_bot_client = telebot.TeleBot(token)
         self.s3_bucket_name = 'haitham-polybot-dev'
         self.s3_client = boto3.client('s3')
-        self.yolo_url = 'http://10.0.1.207:8080/predict'
+        self.yolo_url = os.environ['YOLO_SERVER_URL']
         
 
         # remove any existing webhooks configured in Telegram servers
@@ -61,7 +61,8 @@ class Bot:
 
     def notify_yolo_service(self, image_name):
         payload = {'image_name': image_name}
-        response = requests.post(self.yolo_url, json=payload)
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(self.yolo_url, json=payload, headers=headers)
         response.raise_for_status() 
         return response.json()
 
