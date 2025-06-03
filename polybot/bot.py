@@ -61,9 +61,8 @@ class Bot:
 
     def notify_yolo_service(self, image_name):
         payload = {'image_name': image_name}
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(self.yolo_url, json=payload, headers=headers)
-        response.raise_for_status() 
+        response = requests.post(self.yolo_url, data=payload)
+        response.raise_for_status()
         return response.json()
 
     def send_photo(self, chat_id, img_path):
