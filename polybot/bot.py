@@ -145,9 +145,8 @@ class ImageProcessingBot(Bot):
                     s3_key = photo_path
                     self.upload_to_s3(photo_path, s3_key)
                     response = self.notify_yolo_service(s3_key)
-                    if response.status_code == 200:
-                        result = response.json()
-                        labels = result.get("labels", [])
+                    if response:
+                        labels = response.get("labels", [])
                         detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
                         self.send_text(chat_id, detection_msg)
                     else:
