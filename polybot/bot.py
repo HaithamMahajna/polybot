@@ -14,7 +14,7 @@ class Bot:
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
-        self.s3_bucket_name = 'haitham-polybot-dev'
+        self.s3_bucket_name = 'haitham-polybot-images'
         self.s3_client = boto3.client('s3')
         self.yolo_url = os.environ['YOLO_SERVER_URL']
         
