@@ -6,6 +6,7 @@ from telebot.types import InputFile
 from .img_proc import Img
 import requests
 import boto3
+from pydantic import BaseModel
 
 class Bot:
 
@@ -57,12 +58,16 @@ class Bot:
         return file_info.file_path
     def upload_to_s3(self, local_file_path, s3_key):
         self.s3_client.upload_file(local_file_path, self.s3_bucket_name, s3_key)
-        
+
+
+    class ImageNameRequest(BaseModel):
+        image_name: str
+    
 
     def notify_yolo_service(self, image_name):
-        payload = {'image_name': image_name}  
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(self.yolo_url, json=payload, headers=headers)
+        payload = self.ImageNameRequest(image_name=image_name).dict()
+        response = requests.post(self.yolo_url, json=payload)  # sends JSON
+        response.raise_for_status()
         return response.json()
 
     def send_photo(self, chat_id, img_path):
