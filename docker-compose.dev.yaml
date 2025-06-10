@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  polybot:
+    image: ${IMG_NAME}
+    ports:
+      - "8443:8443"
+    environment:
+      - ENV=dev
+

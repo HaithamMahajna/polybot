@@ -1,127 +1,42 @@
-# The name of the workflow
-name: Polybot Deploy
+# .github/workflows/deploy-dev.yaml
+name: Polybot Deploy Dev
 
 on:
-  # The workflow will run when a push is made to branch `dev`
-  push:
-    branches:
-      - dev
-     
-  # Allow to run it manually as well from GitHub web
+  workflow_call:
+    inputs:
+      image:
+        required: true
+        type: string
   workflow_dispatch:
+    inputs:
+      image:
+        required: true
+        type: string
 
-# Environment variables 
-env:
-  # The URL of the GitHub repository, taken from GitHub context variables
-  REPO_URL: ${{ github.server_url }}/${{ github.repository }}.git
-  # The name of the repository without owner, taken from GitHub context variables
-  REPO_NAME: ${{ github.event.repository.name }}
-          
-# A workflow run is made up of one or more jobs. By default, different jobs are running concurrently
 jobs:
-  # This is a job named `Deploy`
-  Deploy:
-    # The type of machine to run the job on
-    runs-on: ubuntu-latest
-    
-    # A job contains a sequence of tasks called steps
-    steps:
-      # The first step, named **Checkout code**, 
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Configure SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
-          chmod 600 ~/.ssh/private_key
-          cat > ~/.ssh/config << EOF
-          Host ec2
-              HostName $EC2_HOST
-              User $EC2_USERNAME
-              IdentityFile ~/.ssh/private_key
-              StrictHostKeyChecking no
-          EOF
-      
-      - name: Copy script to EC2
-
-        run: |
-          # Clone repository if it doesn't exist, otherwise pull latest changes
-          ssh ec2 "if [ -d ~/${REPO_NAME} ]; then cd ~/${REPO_NAME} && git pull --no-rebase; else git clone ${REPO_URL} ~/${REPO_NAME}; fi"
-      - name: Create polybot.service file
-        run: |
-          cat <<EOF > polybot.service
-          [Unit]
-          Description=poly bot Service
-          After=network.target
-          [Service]
-          User=ubuntu
-          WorkingDirectory=/home/ubuntu/polybot
-          ExecStart=/home/ubuntu/polybot/polybot/venv/bin/python3 -m polybot.app
-          Environment=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
-          Environment=BOT_APP_URL=https://haitham.fursa.click
-          Environment=YOLO_SERVER_URL=${{ secrets.YOLO_SERVER_URL_DEV }}
-          Restart=always
-          [Install]
-          WantedBy=multi-user.target
-          EOF
-        
-
-      - name: Copy polybot.service to EC2
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
-          chmod 600 ~/.ssh/private_key
-          scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
-          ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-          sudo mv /home/$EC2_USERNAME/polybot.service /etc/systemd/system/polybot.service
-          EOF
-
-
-      - name: Install OTC
-        run : |
-          ssh ec2 << 'EOF'
-            sudo apt-get update 
-            sudo apt-get -y install wget
-            wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.127.0/otelcol_0.127.0_linux_amd64.deb
-            sudo dpkg -i otelcol_0.127.0_linux_amd64.deb
-          EOF
-
-      - name: Create config.yaml on EC2
-        run: |
-          ssh ec2 << 'EOF'
-            sudo tee /etc/otelcol/config.yaml > /dev/null << EOC
-              receivers:
-                hostmetrics:
-                  collection_interval: 15s
-                  scrapers:
-                    cpu:
-                    memory:
-                    disk:
-                    filesystem:
-                    load:
-                    network:
-                    processes:
-              exporters:
-                prometheus:
-                  endpoint: "0.0.0.0:8889"
-              service:
-                pipelines:
-                  metrics:
-                    receivers: [hostmetrics]
-                    exporters: [prometheus]
-          EOC
-          EOF
-          
-      - name: Execute script on EC2
-        run: |
-          ssh ec2 "cd $REPO_NAME && git checkout dev && git pull && bash deploy-dev.sh"
+    Deploy:
+       runs-on: ubuntu-latest
+       steps:
+        - uses: actions/checkout@v4
+        - name: Deploy Docker image
+          env:
+            EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
+            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+            SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            IMG_NAME: ${{ inputs.image }}
+            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+          run: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
+            chmod 600 ~/.ssh/private_key
+            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
+            # Generate .env file. 
+            echo """
+            IMG_NAME=$IMG_NAME
+            TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
+            TELEGRAM_APP_URL=https://haitham.fursa.click
+            """ > .env
+            docker compose -f docker-compose.dev.yaml pull
+            docker compose -f docker-compose.dev.yaml up -d
+            EOF
