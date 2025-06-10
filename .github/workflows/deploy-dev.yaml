@@ -21,10 +21,10 @@ jobs:
         - name: Deploy Docker image
           env:
             IMG_NAME: ${{ inputs.image }}
-            EC2_HOST: ${{ inputs.EC2_HOST }}
-            EC2_USERNAME: ${{ inputs.EC2_USERNAME }}
-            SSH_PRIVATE_KEY: ${{ inputs.SSH_PRIVATE_KEY }}
-            TELEGRAM_BOT_TOKEN: ${{ inputs.TELEGRAM_BOT_TOKEN }}
+            EC2_HOST_DEV: ${{ secrets.EC2_HOST_DEV }}
+            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+            EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+            TELEGRAM_BOT_TOKEN_DEV: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
           
           run: |
           
