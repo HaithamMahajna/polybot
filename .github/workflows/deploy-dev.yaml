@@ -26,14 +26,11 @@ jobs:
             IMG_NAME: ${{ inputs.image }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
           run: |
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
-            chmod 600 ~/.ssh/private_key
-            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << 'EOF'
-            set -x
             echo "IMG_NAME=${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
             echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
-            docker compose -f docker-compose.dev.yaml pull
-            docker compose -f docker-compose.dev.yaml up -d
-            EOF
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
+            chmod 600 ~/.ssh/private_key
+            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/.env
+            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.dev.yaml up -d"
