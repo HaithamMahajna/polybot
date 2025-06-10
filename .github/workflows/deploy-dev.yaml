@@ -20,12 +20,12 @@ jobs:
         - uses: actions/checkout@v4
         - name: Deploy Docker image
           env:
-            EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
-            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-            SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             IMG_NAME: ${{ inputs.image }}
-            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
-
+            EC2_HOST: ${{ inputs.EC2_HOST }}
+            EC2_USERNAME: ${{ inputs.EC2_USERNAME }}
+            SSH_PRIVATE_KEY: ${{ inputs.SSH_PRIVATE_KEY }}
+            TELEGRAM_BOT_TOKEN: ${{ inputs.TELEGRAM_BOT_TOKEN }}
+          
           run: |
           
             echo "IMG_NAME=${IMG_NAME}" > .env
