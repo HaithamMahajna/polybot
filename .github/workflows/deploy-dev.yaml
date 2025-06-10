@@ -20,14 +20,14 @@ jobs:
         - uses: actions/checkout@v4
         - name: Deploy Docker image
           env:
+            EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
+            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            IMG_NAME: ${{ inputs.image }}
+            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+
           run: |
-            export EC2_HOST=${{ secrets.EC2_HOST_DEV }}
-            export EC2_USERNAME=${{ secrets.EC2_USERNAME }}
-            export IMG_NAME=${{ inputs.image }}
-            export TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
-
-
+          
             echo "IMG_NAME=${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
             echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
