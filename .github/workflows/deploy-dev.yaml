@@ -30,12 +30,8 @@ jobs:
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
             ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
-            # Generate .env file. 
-            echo """
-            IMG_NAME=${IMG_NAME}
-            TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-            TELEGRAM_APP_URL=https://haitham.fursa.click
-            """ > .env
+            echo "IMG_NAME=${IMG_NAME}" > .env
+            echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
+            echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
             docker compose -f docker-compose.dev.yaml pull
             docker compose -f docker-compose.dev.yaml up -d
-            EOF
