@@ -1,8 +1,10 @@
 ARG ENV=dev
-ENV ENVIRONMENT=$ENV
-
 # Use official base image
 FROM python:3.10-slim
+
+ENV ENVIRONMENT=$ENV
+
+
 
 # Set working directory inside container
 WORKDIR /app
