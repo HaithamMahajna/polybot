@@ -29,7 +29,8 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
-            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
+            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << 'EOF'
+            set -x
             echo "IMG_NAME=${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
             echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
