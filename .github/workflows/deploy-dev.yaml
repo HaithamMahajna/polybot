@@ -29,7 +29,6 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
-            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no polybot.service $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
             ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST << EOF
             # Generate .env file. 
             echo """
