@@ -21,7 +21,7 @@ jobs:
         - name: Deploy Docker image
           env:
             EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
-            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+            EC2_USERNAME: ${{ ubuntu }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             IMG_NAME: ${{ inputs.image }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
