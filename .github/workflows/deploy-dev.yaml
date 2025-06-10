@@ -33,7 +33,7 @@ jobs:
             IMG_NAME: ${{ inputs.image }}
             EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-            EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+            SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
           
           run: |
