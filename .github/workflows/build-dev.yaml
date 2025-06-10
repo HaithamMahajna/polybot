@@ -25,7 +25,6 @@ jobs:
           
          # build & push the image 
          docker build --push -t $img_name  .
-
   Deploy:
     needs: Build 
     uses: ./.github/workflows/deploy-dev.yaml
