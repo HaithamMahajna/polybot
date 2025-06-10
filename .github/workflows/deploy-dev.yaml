@@ -16,7 +16,7 @@ on:
         required: true
       TELEGRAM_BOT_TOKEN_DEV:
         required: true
-        
+
   workflow_dispatch:
     inputs:
       image:
@@ -31,10 +31,10 @@ jobs:
         - name: Deploy Docker image
           env:
             IMG_NAME: ${{ inputs.image }}
-            EC2_HOST_DEV: ${{ secrets.EC2_HOST_DEV }}
+            EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
             EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-            TELEGRAM_BOT_TOKEN_DEV: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
           
           run: |
           
