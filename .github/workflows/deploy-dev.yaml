@@ -15,23 +15,23 @@ on:
 
 jobs:
     Deploy:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v4
-         - name: Deploy Docker image
-           env:
-             EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
-             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
-             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-             IMG_NAME: ${{ inputs.image }}
-             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Deploy Docker image
+          env:
+            EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
+            EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+            SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+            IMG_NAME: ${{ inputs.image }}
+            TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
 
-           run: |
-             echo "IMG_NAME=${IMG_NAME}" > .env
-             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
-             echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
-             mkdir -p ~/.ssh
-             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
-             chmod 600 ~/.ssh/private_key
-             scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/.env
-             ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.dev.yaml up -d"
+          run: |
+            echo "IMG_NAME=${IMG_NAME}" > .env
+            echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
+            echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
+            chmod 600 ~/.ssh/private_key
+            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/.env
+            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.dev.yaml up -d"
