@@ -7,6 +7,16 @@ on:
       image:
         required: true
         type: string
+    secrets:
+      EC2_HOST_DEV:
+        required: true
+      EC2_USERNAME:
+        required: true
+      EC2_SSH_KEY:
+        required: true
+      TELEGRAM_BOT_TOKEN_DEV:
+        required: true
+        
   workflow_dispatch:
     inputs:
       image:
