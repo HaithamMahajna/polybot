@@ -14,7 +14,7 @@ jobs:
     steps:
      - uses: actions/checkout@v4
      - id: build-image
-     - name: Build Docker image
+       name: Build Docker image
        env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -32,7 +32,7 @@ jobs:
     needs: Build 
     uses: ./.github/workflows/deploy-dev.yaml
     with:
-      image: ${{ jobs.Build.outputs.image }}
+      image: ${{ needs.Build.outputs.image }}
     secrets:
       EC2_HOST_DEV: ${{ secrets.EC2_HOST_DEV }}
       EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
