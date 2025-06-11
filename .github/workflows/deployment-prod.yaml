@@ -56,4 +56,4 @@ jobs:
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
             scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env docker-compose.prod.yaml $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
-            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.prod.yaml up -d"
+            ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.prod.yaml pull && docker compose -f docker-compose.prod.yaml up -d"
