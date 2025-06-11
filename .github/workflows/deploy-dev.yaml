@@ -16,6 +16,9 @@ on:
         required: true
       TELEGRAM_BOT_TOKEN_DEV:
         required: true
+      IMAGE:
+        required: true
+
 
   workflow_dispatch:
     inputs:
