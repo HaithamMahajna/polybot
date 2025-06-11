@@ -30,7 +30,7 @@ jobs:
         - uses: actions/checkout@v4
         - name: Deploy Docker image
           env:
-            IMG_NAME: ${{ inputs.image }}
+            IMG_NAME: ${{ secrets.IMAGE }}
             EC2_HOST: ${{ secrets.EC2_HOST_DEV }}
             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
