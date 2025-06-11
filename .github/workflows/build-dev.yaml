@@ -21,7 +21,7 @@ jobs:
        run: |
          docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
          
-         img_name=${{ secrets.DOCKERHUB_USERNAME }}/polybot-dev:${{github.run_number}}
+         img_name="haithammahajna"/polybot-dev:${{github.run_number}}
          
          # same docker_image to pass it to the next workflow 
          echo "image=$img_name" >> $GITHUB_OUTPUT
@@ -38,4 +38,3 @@ jobs:
       EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
       EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
       TELEGRAM_BOT_TOKEN_DEV: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
-      IMAGE: ${{ img_name }}
