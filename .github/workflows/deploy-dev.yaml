@@ -46,7 +46,7 @@ jobs:
           
             echo "IMG_NAME=${DOCKERHUB_USERNAME}/${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
-            echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
+            echo "BOT_APP_URL=https://haitham.fursa.click" >> .env
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
