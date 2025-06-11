@@ -9,8 +9,11 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
     steps:
      - uses: actions/checkout@v4
+     - id: build-image
      - name: Build Docker image
        env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -29,7 +32,7 @@ jobs:
     needs: Build 
     uses: ./.github/workflows/deploy-dev.yaml
     with:
-      image: ${ steps.Build.outputs.image }
+      image: ${{ jobs.Build.outputs.image }}
     secrets:
       EC2_HOST_DEV: ${{ secrets.EC2_HOST_DEV }}
       EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
