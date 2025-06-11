@@ -7,5 +7,6 @@ services:
       - .env  # Loads TELEGRAM_BOT_TOKEN from host .env into container
     environment:
       - TELEGRAM_BOT_TOKEN  # Pass it to the container environment
-      - TELEGRAM_APP_URL
+      - BOT_APP_URL
+      - YOLO_SERVER_URL
 

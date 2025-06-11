@@ -18,6 +18,9 @@ on:
         required: true
       DOCKERHUB_USERNAME:
         required: true
+      YOLO_SERVER_URL:
+        required: true
+
 
 
 
@@ -40,6 +43,7 @@ jobs:
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
             DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+            YOLO_SERVER_URL: ${{ secrets.YOLO_SERVER_URL }}
           
           
           run: |
@@ -47,6 +51,7 @@ jobs:
             echo "IMG_NAME=${DOCKERHUB_USERNAME}/${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
             echo "BOT_APP_URL=https://haitham.fursa.click" >> .env
+            echo "YOLO_SERVER_URL=${YOLO_SERVER_URL}" >> .env
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
