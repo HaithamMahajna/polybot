@@ -37,11 +37,12 @@ jobs:
             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+            DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           
           
           run: |
           
-            echo "IMG_NAME=${IMG_NAME}" > .env
+            echo "IMG_NAME=${DOCKERHUB_USERNAME}/${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
             echo "TELEGRAM_APP_URL=https://haitham.fursa.click" >> .env
             mkdir -p ~/.ssh
