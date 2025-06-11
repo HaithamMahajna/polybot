@@ -5,6 +5,8 @@ import time
 from telebot.types import InputFile
 from .img_proc import Img
 import requests
+import boto3
+from pydantic import BaseModel
 
 class Bot:
 
@@ -12,6 +14,10 @@ class Bot:
         # create a new instance of the TeleBot class.
         # all communication with Telegram servers are done using self.telegram_bot_client
         self.telegram_bot_client = telebot.TeleBot(token)
+        self.s3_bucket_name = 'haitham-polybot-images'
+        self.s3_client = boto3.client('s3')
+        self.yolo_url = os.environ['YOLO_SERVER_URL']
+        
 
         # remove any existing webhooks configured in Telegram servers
         self.telegram_bot_client.remove_webhook()
@@ -50,6 +56,20 @@ class Bot:
             photo.write(data)
 
         return file_info.file_path
+    def upload_to_s3(self, local_file_path, s3_key):
+        self.s3_client.upload_file(local_file_path, self.s3_bucket_name, s3_key)
+
+
+    class ImageNameRequest(BaseModel):
+        image_name: str
+    
+
+    def notify_yolo_service(self, image_name):
+        headers = {'Content-Type': 'application/json'}
+        payload = self.ImageNameRequest(image_name=image_name).dict()
+        response = requests.post(self.yolo_url, json=payload,headers=headers)  # sends JSON
+        response.raise_for_status()
+        return response.json()
 
     def send_photo(self, chat_id, img_path):
         if not os.path.exists(img_path):
@@ -119,9 +139,20 @@ class ImageProcessingBot(Bot):
                 photo_path = self.download_user_photo(msg)
                 img = Img(photo_path)
 
-                if caption == 'blur':
 
-                    
+
+                if caption == 'Detect':
+                    s3_key = photo_path
+                    self.upload_to_s3(photo_path, s3_key)
+                    response = self.notify_yolo_service(s3_key)
+                    if response:
+                        labels = response.get("labels", [])
+                        detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
+                        self.send_text(chat_id, detection_msg)
+                    else:
+                        self.send_text(chat_id, f"YOLO server error: {response.status_code}")
+                    return
+                elif caption == 'Blur':
                     img.blur()
                 elif caption == 'Contour':
                     img.contour()
@@ -131,25 +162,12 @@ class ImageProcessingBot(Bot):
                     img.segment()
                 elif caption == 'Salt and pepper':
                     img.salt_n_pepper()
-                elif caption == 'Detect':
-                    # New logic: send image to YOLO detection server
-                    yolo_url = os.environ['YOLO_SERVER_URL']
-                    with open(photo_path, 'rb') as f:
-                        response = requests.post(yolo_url, files={'file': f})
-                    if response.status_code == 200:
-                        result = response.json()
-                        labels = result.get("labels", [])
-                        detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
-                        self.send_text(chat_id, detection_msg)
-                    else:
-                        self.send_text(chat_id, f"YOLO server error: {response.status_code}")
-                    return
                 else:
                     self.send_text(chat_id, "Unknown or missing caption.")
-                    return
+                    processed_path = img.save_img()
+                    self.send_photo(chat_id, processed_path)
 
-                processed_path = img.save_img()
-                self.send_photo(chat_id, processed_path)
+                    return
 
             elif 'text' in msg:
                 super().handle_message(msg)
