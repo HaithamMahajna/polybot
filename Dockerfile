@@ -19,4 +19,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8443
 
 # Start the app
-CMD ["python3 -m", "polybot.app"]
+CMD ["python3", "-m" ,"polybot.app"]

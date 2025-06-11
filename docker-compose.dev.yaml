@@ -3,4 +3,5 @@ services:
     image: ${IMG_NAME}
     ports:
       - "8443:8443"
+    command: python3 -m polybot.app
 
