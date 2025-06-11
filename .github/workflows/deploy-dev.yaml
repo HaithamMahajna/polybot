@@ -38,6 +38,7 @@ jobs:
             EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
             SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
             TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
+            DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           
           run: |
           
