@@ -47,7 +47,7 @@ jobs:
           
           
           run: |
-            cat <<EOF > otelcol-config.yml
+            cat <<EOF > otelcol-config.yaml
             receivers:
               hostmetrics:
                 collection_interval: 15s
@@ -79,5 +79,5 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
-            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env docker-compose.dev.yaml otelcol-config.yml $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env docker-compose.dev.yaml otelcol-config.yaml $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
             ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.dev.yaml up -d"
