@@ -47,6 +47,30 @@ jobs:
           
           
           run: |
+            cat <<EOF > otelcol-config.yml
+            receivers:
+              hostmetrics:
+                collection_interval: 15s
+                scrapers:
+                  cpu:
+                  memory:
+                  disk:
+                  filesystem:
+                  load:
+                  network:
+                  processes:
+
+            exporters:
+              prometheus:
+                endpoint: 0.0.0.0:8889
+
+            service:
+              pipelines:
+                metrics:
+                  receivers: [hostmetrics]
+                  exporters: [prometheus]
+            EOF
+            
           
             echo "IMG_NAME=${DOCKERHUB_USERNAME}/${IMG_NAME}" > .env
             echo "TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}" >> .env
@@ -55,5 +79,5 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/private_key
             chmod 600 ~/.ssh/private_key
-            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env docker-compose.dev.yaml $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
+            scp -i ~/.ssh/private_key -o StrictHostKeyChecking=no .env docker-compose.dev.yaml otelcol-config.yaml $EC2_USERNAME@$EC2_HOST:/home/$EC2_USERNAME/
             ssh -i ~/.ssh/private_key -o StrictHostKeyChecking=no $EC2_USERNAME@$EC2_HOST "docker compose -f docker-compose.dev.yaml pull && docker compose -f docker-compose.dev.yaml up -d"
