@@ -10,7 +10,7 @@ services:
       - BOT_APP_URL
       - YOLO_SERVER_URL
   otelcol:
-    image: otel/opentelemetry-collector-contrib:latest
+    image: otel/opentelemetry-collector:latest
     ports:
       - "8889:8889"  # Expose the Prometheus exporter port
     volumes:
