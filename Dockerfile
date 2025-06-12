@@ -10,12 +10,14 @@ ENV ENVIRONMENT=$ENV
 WORKDIR /app
 
 # Copy app code
-COPY . .
+
 
 # Install dependencies
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 RUN pip install boto3
-RUN pip install pydantic   
+RUN pip install pydantic  
+COPY . . 
 # Expose port
 EXPOSE 8443
 

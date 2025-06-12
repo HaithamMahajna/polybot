@@ -39,4 +39,4 @@ jobs:
       EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
       TELEGRAM_BOT_TOKEN_DEV: ${{ secrets.TELEGRAM_BOT_TOKEN_DEV }}
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      YOLO_SERVER_URL: ${{ secrets.YOLO_SERVER_URL_DEV }}
+      YOLO_SERVER_URL_DEV: ${{ secrets.YOLO_SERVER_URL_DEV }}
