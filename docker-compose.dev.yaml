@@ -9,7 +9,7 @@ services:
       - TELEGRAM_BOT_TOKEN  # Pass it to the container environment
       - BOT_APP_URL
       - YOLO_SERVER_URL
-    volunes:
+    volumes:
       - /home/ubuntu/polybotdev.crt:/app/polybotdev.crt
   otelcol:
     image: otel/opentelemetry-collector:latest
