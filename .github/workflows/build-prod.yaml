@@ -1,5 +1,5 @@
 # .github/workflows/build-dev.yaml
-name: Polybot Build Dev
+name: Polybot Build Prod
 
 on:
   push:
