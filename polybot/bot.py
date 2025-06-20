@@ -69,7 +69,6 @@ class Bot:
     def notify_yolo_service(self, image_name):
         headers = {'Content-Type': 'application/json'}
         payload = self.ImageNameRequest(image_name=image_name).dict()
-
         sqs = boto3.client('sqs', region_name='us-east-1')
         QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/228281126655/haitham-polybot-chat-messages'
         try:
