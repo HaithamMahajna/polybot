@@ -73,15 +73,24 @@ class Bot:
         sqs = boto3.client('sqs', region_name='us-east-1')
         QUEUE_URL = 'https://sqs.us-east-1.amazonaws.com/228281126655/haitham-polybot-chat-messages'
         try:
-            response1 = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=json.dumps(payload))
-            response = requests.post(self.yolo_url)  # sends JSON
-            response.raise_for_status()
-            print(f"Message sent successfully. MessageId: {response1['MessageId']}")
+            sqs_response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=json.dumps(payload))
+            print(f"Message sent successfully. MessageId: {sqs_response['MessageId']}")
         # send to the client - "your message is being processed...."
+            notify_response = requests.post(self.yolo_url)
+            notify_response.raise_for_status()
+            return {
+                "status": "success",
+                "sqs_message_id": sqs_response['MessageId'],
+                "yolo_status": notify_response.status_code
+                }
         except ClientError as e:
                 print(f"Error sending message: {e}")
+                return {"error": "Failed to send message to SQS", "details": str(e)}
+        except requests.RequestException as e:
+            print(f"Error notifying YOLO service: {e}")
+            return {"error": "Failed to notify YOLO service", "details": str(e)}
         # send to the client - "Opps, something went wrong. Please try again later."
-        return response1.json()
+
     
 
     def send_photo(self, chat_id, img_path):
