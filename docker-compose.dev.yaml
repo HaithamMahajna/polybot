@@ -9,6 +9,7 @@ services:
       - TELEGRAM_BOT_TOKEN  # Pass it to the container environment
       - BOT_APP_URL
       - YOLO_SERVER_URL
+    restart: always
     volumes:
       - /home/ubuntu/polybotdev.crt:/app/polybotdev.crt
   otelcol:
@@ -24,4 +25,5 @@ services:
       - HOST_PROC=/hostfs/proc
       - HOST_SYS=/hostfs/sys
     network_mode: host
+    restart: always
 
