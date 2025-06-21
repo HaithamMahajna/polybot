@@ -74,7 +74,7 @@ class Bot:
             sqs_response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=json.dumps(payload))
             print(f"Message sent successfully. MessageId: {sqs_response['MessageId']}")
         # send to the client - "your message is being processed...."
-            notify_response = requests.post(self.yolo_url)
+            notify_response = requests.post(self.yolo_url/'predict')
             notify_response.raise_for_status()
             result = notify_response.json()
 
