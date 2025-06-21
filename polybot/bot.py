@@ -174,7 +174,8 @@ class ImageProcessingBot(Bot):
                             time.sleep(2)
                             response = requests.get(f"{self.yolo_url}/prediction/{uid}")
                             if response:
-                                detection_objects = response.get("detection_objects", [])
+                                data = response.json()
+                                detection_objects = data.get("detection_objects", [])
                                 labels = [obj["label"] for obj in detection_objects]
                                 detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
                                 self.send_text(chat_id, detection_msg)
