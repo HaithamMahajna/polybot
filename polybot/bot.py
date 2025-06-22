@@ -66,7 +66,7 @@ class Bot:
         self.s3_client.upload_file(local_file_path, self.s3_bucket_name, s3_key)
 
     app = Flask(__name__)
-    @app.route("/predictions/<prediction_id>/<chat_id>", methods=["POST"])
+    @app.route("/predictions/<prediction_id>", methods=["POST"])
     def get_prediction(self,prediction_id):
         data = request.get_json()
         chat_id = data.get("chat_id")
@@ -127,7 +127,6 @@ class Bot:
         try:
             sqs_response = sqs.send_message(QueueUrl=QUEUE_URL, MessageBody=json.dumps(payload))
             print(f"Message sent successfully. MessageId: {sqs_response['MessageId']}")
-        # send to the client - "your message is being processed...."
             return {
                 "status": "success",
                 "sqs_message_id": sqs_response['MessageId'],
