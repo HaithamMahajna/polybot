@@ -73,6 +73,7 @@ class Bot:
         dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
         prediction_table = dynamodb.Table('HaithamPredictionSessions')
         detection_table = dynamodb.Table('HaithamDetectionSessions')
+        print (f"Returning chatID : {chat_id}")
         try:
             prediction = prediction_table.get_item(Key={'uid': prediction_id}).get('Item')
             if not prediction:
