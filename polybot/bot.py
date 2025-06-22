@@ -15,7 +15,7 @@ from flask import Flask , jsonify
 
 app = Flask(__name__)
 @app.route("/predictions/<prediction_id>", methods=["POST"])
-def get_prediction(self,prediction_id):
+def get_prediction(prediction_id):
     data = request.get_json()
     chat_id = data.get("chat_id")
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
