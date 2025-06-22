@@ -101,7 +101,6 @@ class Bot:
             return jsonify({"error": f"SDynamoDB error: {str(e)}"}), 500
         
         if prediction_id:
-            time.sleep(2)
             if data:
                 data = data.json()
                 detection_objects = data.get("detection_objects", [])
