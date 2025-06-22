@@ -9,7 +9,6 @@ import boto3
 from pydantic import BaseModel
 import json
 from botocore.exceptions import ClientError
-from fastapi import FastAPI, UploadFile, File, HTTPException, Request, Form
 import flask
 from flask import request
 from flask import Flask , jsonify
