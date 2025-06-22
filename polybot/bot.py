@@ -13,6 +13,63 @@ import flask
 from flask import request
 from flask import Flask , jsonify
 
+app = Flask(__name__)
+@app.route("/predictions/<prediction_id>", methods=["POST"])
+def get_prediction(self,prediction_id):
+    data = request.get_json()
+    chat_id = data.get("chat_id")
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    prediction_table = dynamodb.Table('HaithamPredictionSessions')
+    detection_table = dynamodb.Table('HaithamDetectionSessions')
+    print (f"Returning chatID : {chat_id}")
+    try:
+        prediction = prediction_table.get_item(Key={'uid': prediction_id}).get('Item')
+        if not prediction:
+            return jsonify({"error" : "Prediction not found"}), 404
+                
+    # Get detection objects
+        request = detection_table.query(
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('prediction_uid').eq(prediction_id)
+        )
+        detection_objects = request.get('Items', [])
+
+        data ={
+            "uid": prediction_id,
+            "original_image": prediction.get("original_image"),
+            "predicted_image": prediction.get("predicted_image"),
+            "detection_objects": [
+                {
+                    "label": obj["label"],
+                    "score": float(obj["score"]),
+                    "box": obj["box"]
+                } for obj in detection_objects
+            ]
+        }
+    except Exception as e:
+        return jsonify({"error": f"SDynamoDB error: {str(e)}"}), 500
+        
+    if prediction_id:
+        if data:
+            data = data.json()
+            detection_objects = data.get("detection_objects", [])
+            labels = [obj["label"] for obj in detection_objects]
+            detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
+            self.send_text(chat_id, detection_msg)
+            return jsonify({"status": "ok"})
+        else:
+            self.send_text(chat_id, f"YOLO server error: {request.status_code}")
+            return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+
+
+
+
+
+
+
+
+
+
 
 class Bot:
 
