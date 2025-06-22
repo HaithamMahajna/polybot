@@ -77,7 +77,7 @@ class Bot:
         try:
             prediction = prediction_table.get_item(Key={'uid': prediction_id}).get('Item')
             if not prediction:
-                return jsonify({"error Prediction not found"}), 404
+                return jsonify({"error" : "Prediction not found"}), 404
                 
         # Get detection objects
             request = detection_table.query(
