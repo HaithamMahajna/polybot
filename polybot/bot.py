@@ -231,7 +231,7 @@ class ImageProcessingBot(Bot):
                     self.send_text(chat_id, "Unknown or missing caption.")
                     processed_path = img.save_img()
                     self.send_photo(chat_id, processed_path)
-
+                    
                     return
 
             elif 'text' in msg:
