@@ -257,7 +257,7 @@ class ImageProcessingBot(Bot):
 
 
 app = Flask(__name__)
-bot = ImageProcessingBot():
+bot = ImageProcessingBot()
 @app.route("/predictions/<prediction_id>", methods=["POST"])
 def get_prediction(prediction_id):
     data = request.get_json()
