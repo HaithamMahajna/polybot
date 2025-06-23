@@ -37,10 +37,10 @@ def get_prediction(prediction_id):
             return jsonify({"error" : "Prediction not found"}), 404
                 
     # Get detection objects
-        request = detection_table.query(
+        query_response = detection_table.query(
             KeyConditionExpression=boto3.dynamodb.conditions.Key('prediction_uid').eq(prediction_id)
         )
-        detection_objects = request.get('Items', [])
+        detection_objects = query_response.get('Items', [])
 
         data ={
             "uid": prediction_id,
