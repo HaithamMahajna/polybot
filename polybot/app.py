@@ -1,8 +1,9 @@
-import flask , jsonify
+import flask 
 from flask import request
 import os
 from .bot import Bot, QuoteBot, ImageProcessingBot
 import boto3
+from flask import jsonify
 
 app = flask.Flask(__name__)
 
