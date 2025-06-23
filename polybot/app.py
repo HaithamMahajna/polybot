@@ -59,7 +59,6 @@ def get_prediction(prediction_id):
         
     if prediction_id:
         if data:
-            data = data.json()
             detection_objects = data.get("detection_objects", [])
             labels = [obj["label"] for obj in detection_objects]
             detection_msg = f"Detected objects:\n" + "\n".join(labels) if labels else "No objects detected."
