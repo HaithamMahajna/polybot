@@ -34,7 +34,6 @@ class Bot:
         self.telegram_bot_client = telebot.TeleBot(token)
         self.s3_bucket_name = 'haitham-polybot-dev'
         self.s3_client = boto3.client('s3')
-        self.yolo_url = os.environ['YOLO_SERVER_URL']
         
 
         # remove any existing webhooks configured in Telegram servers
