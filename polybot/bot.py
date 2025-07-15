@@ -55,24 +55,26 @@ class Bot:
         return 'photo' in msg
 
     def download_user_photo(self, msg):
-        """
-        Downloads the photos that sent to the Bot to `photos` directory (should be existed)
-        :return:
-        """
+
         if not self.is_current_msg_photo(msg):
-            raise RuntimeError(f'Message content of type \'photo\' expected')
+            raise RuntimeError("Expected a photo message")
 
         file_info = self.telegram_bot_client.get_file(msg['photo'][-1]['file_id'])
         data = self.telegram_bot_client.download_file(file_info.file_path)
-        folder_name = file_info.file_path.split('/')[0]
 
-        if not os.path.exists(folder_name):
-            os.makedirs(folder_name)
+        filename = os.path.basename(file_info.file_path)
+        folder_path = 'photos'
+        os.makedirs(folder_path, exist_ok=True)
 
-        with open(file_info.file_path, 'wb') as photo:
+        full_local_path = os.path.join(folder_path, filename)
+
+        with open(full_local_path, 'wb') as photo:
             photo.write(data)
 
-        return file_info.file_path
+        return full_local_path  
+
+
+
     def upload_to_s3(self, local_file_path, s3_key):
         self.s3_client.upload_file(local_file_path, self.s3_bucket_name, s3_key)
 
@@ -168,6 +170,7 @@ class ImageProcessingBot(Bot):
 
                 # Single-photo logic
                 photo_path = self.download_user_photo(msg)
+                s3_key = f"uploads/{os.path.basename(photo_path)}"
                 img = Img(photo_path)
 
 
